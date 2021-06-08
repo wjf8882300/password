@@ -1,0 +1,240 @@
+<html>
+<head>
+    <title>收支管理</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <script type="text/javascript" src="./js/lib/jquery.min.js"></script>
+    <script type="text/javascript" src="./js/lib/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./js/lib/jquery.autosuggest.min.js"></script>
+    <script type="text/javascript" src="./js/lib/tip.js"></script>
+    <script type="text/javascript" src="./js/page/login.js"></script>
+    <script type="text/javascript" src="./js/page/income.js"></script>
+    <script type="text/javascript" src="./js/lib/calendar/calendar.min.js"></script>
+    <link rel="stylesheet" href="./css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="./css/autosuggest.min.css"/>
+    <link rel="stylesheet" href="./css/alert.css"/>
+    <link rel="stylesheet" href="./js/lib/calendar/calendar.min.css"/>
+    <style type="text/css">
+        body {
+            padding-top: 20px;
+            padding-bottom: 40px;
+        }
+
+        table {
+            /*table-layout: fixed !important;*/
+            width: 100% !important;
+            border-collapse: collapse;
+            border: none;
+            margin: 0 auto;
+            font-size: 10px;
+        }
+
+        td, th {
+            width: 1px;
+            white-space: nowrap; /* 自适应宽度*/
+            word-break: keep-all; /* 避免长单词截断，保持全部 */
+            border: solid #676767 1px;
+            text-align: center;
+            white-space: pre-line;
+            word-break: break-all !important;
+            word-wrap: break-word !important;
+            display: table-cell;
+            vertical-align: middle !important;
+            white-space: normal !important;
+            height: auto;
+            vertical-align: text-top;
+            padding: 2px 2px 0 2px;
+            display: table-cell;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.onload = function () {
+                // 若没有token，退出按钮不显示
+                if (localStorage.getItem('token') == null) {
+                    $("#bntExit").hide();
+                }
+                $("#bntSearch").click();
+            }
+        });
+    </script>
+</head>
+<body>
+<div class="container">
+    <form role="form" id="passwordForm">
+        <div class="form-group">
+            <label for="searchIncomeType" class="control-label">收入类型</label>
+            <div>
+                <select name="searchProjectType" class="form-control" id="searchIncomeType">
+                    <option value="">请选择</option>
+                    <option value="1">工资</option>
+                    <option value="2">奖金</option>
+                    <option value="3">外快</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="searchStartDate" class="control-label">开始时间</label>
+            <div>
+                <input type="text" class="form-control" id="searchStartDate"
+                       placeholder="yyyy-MM-dd" autocomplete="off">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="searchEndDate" class="control-label">结束时间</label>
+            <div>
+                <input type="text" class="form-control" id="searchEndDate"
+                       placeholder="yyyy-MM-dd" autocomplete="off">
+            </div>
+        </div>
+        <div class="form-group">
+            <div>
+                <button type="button" class="btn btn-primary" id="bntSearch">查询</button>
+                <button type="button" class="btn btn-success" id="bntInsertModal">新增</button>
+                <button type="button" class="btn btn-info" id="bntExit">退出</button>
+            </div>
+        </div>
+        <p><span id="total" style="color: red; font-weight: bold"></span></p>
+        <table class="table table-striped table-bordered">
+            <thead>
+            <tr>
+                <!--<th width="10%">序号</th>-->
+                <th>类型</th>
+                <th>日期</th>
+                <th>金额</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </form>
+
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">&times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">新增收入</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label for="incomeType" class="col-sm-2 control-label">收入类型</label>
+                            <div class="col-sm-10">
+                                <input type="hidden" id="incomeId"/>
+                                <select name="searchProjectType" class="form-control" id="incomeType">
+                                    <option value="1" selected>工资</option>
+                                    <option value="2">奖金</option>
+                                    <option value="3">外快</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="incomeDate" class="col-sm-2 control-label">日期</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="incomeDate"
+                                       placeholder="yyyy-MM-dd" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount" class="col-sm-2 control-label">金额</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="amount"
+                                       placeholder="请输入金额" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="remark" class="col-sm-2 control-label">备注</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="remark" autocomplete="off"/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="bntInsert">保存</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal -->
+    </div>
+
+    <!-- 登陆模态框（Modal） -->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">&times;
+                    </button>
+                    <h4 class="modal-title" id="loginModalLabel">登录</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form" id="authForm">
+                        <div class="form-group">
+                            <label for="loginUserName" class="col-sm-2 control-label">用户名</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="loginUserName"
+                                       placeholder="请输入用户" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginUserPassword" class="col-sm-2 control-label">密码</label>
+                            <div class="col-sm-10">
+                                <input type="password" class="form-control" id="loginUserPassword"
+                                       placeholder="请输入密码" autocomplete="off">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="bntLogin">登录</button>
+                    <input type="hidden" id="id" />
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal -->
+    </div>
+
+    <!-- 二次验证模态框（Modal） -->
+    <div class="modal fade" id="authModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">&times;
+                    </button>
+                    <h4 class="modal-title" id="authModalLabel">身份验证</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form" id="googleForm">
+                        <div class="form-group">
+                            <label for="loginUserName" class="col-sm-2 control-label">验证码</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="code"
+                                       placeholder="请输入验证码" autocomplete="off">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="bntAuth">校验</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal -->
+    </div>
+</div>
+</body>
+</html>
