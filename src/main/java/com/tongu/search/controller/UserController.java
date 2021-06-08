@@ -25,7 +25,7 @@ public class UserController extends BaseController{
 	}
 
 	@GetMapping("/qr")
-	public RespData<String> createQr(String id) {
+	public RespData<String> createQr(Long id) {
 		UserEntity user = userService.check(id);
 		String userName = user == null ? null : user.getUserName();
 		if(!StringUtils.isEmpty(userName)){

@@ -9,8 +9,10 @@ import com.tongu.search.model.entity.ScoreType;
 import com.tongu.search.service.ScoreService;
 import com.tongu.search.service.ScoreTypeService;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Sort;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +33,7 @@ public class ScoreController extends BaseController {
 	public RespData<List<ScoreType>> listType(@RequestBody ScoreBO scoreBO) {
 		ScoreType scoreType = new ScoreType();
 		scoreType.setScoreType(StringUtils.trimToNull(scoreBO.getScoreType()));
-		return success(scoreTypeService.findAll(Example.of(scoreType)));
+		return success(scoreTypeService.findAll(Example.of(scoreType), Sort.by(Sort.Order.desc("scoreValue"))));
 	}
 
 	@PostMapping("/type/save")
@@ -69,7 +71,7 @@ public class ScoreController extends BaseController {
 	public RespData<List<Score>> list(@RequestBody ScoreBO scoreBO) {
 		Score score = new Score();
 		score.setScoreType(StringUtils.trimToNull(scoreBO.getScoreType()));
-		return success(scoreService.findAll(score));
+		return success(scoreService.findAll(Example.of(score), Sort.by(Sort.Order.desc("createDate"))));
 	}
 	
 	@PostMapping("/save")
