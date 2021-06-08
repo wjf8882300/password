@@ -44,3 +44,10 @@
 > 收支管理: http://localhost:8082/income.html
 
 > 积分管理: http://localhost:8082/score.html
+
+##### 截图
+![avatar](https://github.com/wjf8882300/password/blob/main/src/main/resources/static/img/1.png)
+![avatar](https://github.com/wjf8882300/password/blob/main/src/main/resources/static/img/2.png)
+![avatar](https://github.com/wjf8882300/password/blob/main/src/main/resources/static/img/3.png)
+![avatar](https://github.com/wjf8882300/password/blob/main/src/main/resources/static/img/4.png)
+![avatar](https://github.com/wjf8882300/password/blob/main/src/main/resources/static/img/5.png)
